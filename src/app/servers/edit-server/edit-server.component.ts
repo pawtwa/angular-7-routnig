@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { ServersService } from '../servers.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -13,9 +13,10 @@ export class EditServerComponent implements OnInit, OnDestroy {
   server: {id: number, name: string, status: string};
   serverName = '';
   serverStatus = '';
+  allowEdit = false;
 
   // private fragmentSubscription: Subscription;
-  // private queryParamsSubscription: Subscription;
+  private queryParamsSubscription: Subscription;
 
   constructor(
     private serversService: ServersService,
@@ -23,10 +24,16 @@ export class EditServerComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    console.log(this.route, this.route.snapshot.fragment, this.route.snapshot.queryParams);
     // this.fragmentSubscription = this.route.fragment.subscribe();
-    // this.queryParamsSubscription = this.route.queryParams.subscribe();
-    this.server = this.serversService.getServer(1);
+    const id = +this.route.snapshot.params['id'];
+    /**
+     * if subscribing to route.{params|queryParams|fragment}, the snapshot is not really needed, since under the hood a BehaviorSubject is implemented, which preserves the last/initial state, in contrast to a normal Subject.
+     */
+    // this.allowEdit = this.route.snapshot.queryParams['allowEdit'] === '1' ? true : false;
+    this.queryParamsSubscription = this.route.queryParams.subscribe((queryParams: Params) => {
+      this.allowEdit = queryParams['allowEdit'] === '1' ? true : false;
+    });
+    this.server = this.serversService.getServer(id);
     this.serverName = this.server.name;
     this.serverStatus = this.server.status;
   }
@@ -37,6 +44,6 @@ export class EditServerComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // this.fragmentSubscription.unsubscribe();
-    // this.queryParamsSubscription.unsubscribe();
+    this.queryParamsSubscription.unsubscribe();
   }
 }

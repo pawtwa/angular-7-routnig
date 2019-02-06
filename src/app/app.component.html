@@ -11,8 +11,10 @@
         ><a routerLink="/servers">Servers</a></li>
         <li role="presentation" 
           routerLinkActive="active"
-
         ><a [routerLink]="['/users']">Users</a></li>
+
+        <li role="presentation"
+        ><a (click)="toggleLogInOut()">{{ loggedIn ? 'Wyloguj' : 'Zaloguj' }}</a></li>
       </ul>
     </div>
   </div>

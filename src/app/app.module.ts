@@ -11,30 +11,46 @@ import { UserComponent } from './users/user/user.component';
 import { EditServerComponent } from './servers/edit-server/edit-server.component';
 import { ServerComponent } from './servers/server/server.component';
 import { ServersService } from './servers/servers.service';
-import { Routes, RouterModule } from '@angular/router'
+// import { Routes, RouterModule } from '@angular/router';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component'
+import { AppRoutingModule } from './app-routing.module';
+import { AuthService } from './auth.service';
+import { AuthGuard } from './auth-guard.service';
 
-const appRoutes: Routes = [
-  {
-    path: '',
-    component: HomeComponent
-  },
-  {
-    path: 'users',
-    component: UsersComponent
-  },
-  {
-    path: 'users/:id/:name',
-    component: UserComponent
-  },
-  {
-    path: 'servers',
-    component: ServersComponent
-  },
-  {
-    path: 'servers/:id/edit',
-    component: EditServerComponent
-  }
-]
+// const appRoutes: Routes = [
+//   {
+//     path: '',
+//     component: HomeComponent
+//   },
+//   {
+//     path: 'users',
+//     component: UsersComponent,
+//     children: [
+//       {
+//         path: ':id/:name',
+//         component: UserComponent
+//       }
+//     ]
+//   },
+//   {
+//     path: 'servers',
+//     component: ServersComponent,
+//     children: [
+//       {
+//         path: ':id',
+//         component: ServerComponent
+//       },
+//       {
+//         path: ':id/edit',
+//         component: EditServerComponent
+//       }
+//     ]
+//   },
+//   {
+//     path: '**',
+//     component: PageNotFoundComponent
+//   }
+// ]
 
 @NgModule({
   declarations: [
@@ -44,15 +60,17 @@ const appRoutes: Routes = [
     ServersComponent,
     UserComponent,
     EditServerComponent,
-    ServerComponent
+    ServerComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot(appRoutes)
+    // RouterModule.forRoot(appRoutes)
+    AppRoutingModule
   ],
-  providers: [ServersService],
+  providers: [ServersService, AuthService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
