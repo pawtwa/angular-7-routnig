@@ -1,26 +1,29 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { ServersService } from '../servers.service';
-import { ActivatedRoute, Params } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, Params, Router, UrlTree } from '@angular/router';
+import { Subscription, Observable } from 'rxjs';
+import { CanComponentDeactivate } from './can-deactivate-guard.service';
 
 @Component({
   selector: 'app-edit-server',
   templateUrl: './edit-server.component.html',
   styleUrls: ['./edit-server.component.css']
 })
-export class EditServerComponent implements OnInit, OnDestroy {
+export class EditServerComponent implements OnInit, OnDestroy, CanComponentDeactivate {
   server: {id: number, name: string, status: string};
   serverName = '';
   serverStatus = '';
   allowEdit = false;
+  changesSaved: boolean = false;
 
   // private fragmentSubscription: Subscription;
   private queryParamsSubscription: Subscription;
 
   constructor(
     private serversService: ServersService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -40,10 +43,25 @@ export class EditServerComponent implements OnInit, OnDestroy {
 
   onUpdateServer() {
     this.serversService.updateServer(this.server.id, {name: this.serverName, status: this.serverStatus});
+    this.changesSaved = true;
+    this.router.navigate(['../'], {
+      relativeTo: this.route
+    })
   }
 
   ngOnDestroy() {
     // this.fragmentSubscription.unsubscribe();
     this.queryParamsSubscription.unsubscribe();
+  }
+
+  canDeactivate(): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
+    if (!this.allowEdit) {
+      return true;
+    }
+    if ((this.serverName !== this.server.name || this.serverStatus !== this.server.status) && !this.changesSaved) {
+      return confirm('Do you want to discard the changes?');
+    } else {
+      return true;
+    }
   }
 }

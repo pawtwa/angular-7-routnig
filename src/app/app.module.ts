@@ -16,6 +16,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AppRoutingModule } from './app-routing.module';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth-guard.service';
+import { CanDeactivateGuard } from './servers/edit-server/can-deactivate-guard.service';
 
 // const appRoutes: Routes = [
 //   {
@@ -70,7 +71,7 @@ import { AuthGuard } from './auth-guard.service';
     // RouterModule.forRoot(appRoutes)
     AppRoutingModule
   ],
-  providers: [ServersService, AuthService, AuthGuard],
+  providers: [ServersService, AuthService, AuthGuard, CanDeactivateGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
